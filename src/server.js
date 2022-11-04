@@ -2,10 +2,13 @@ import express from "express";
 import "dotenv/config";
 import bodyParser from "body-parser";
 import mongoose from "mongoose";
+import routes from "./routes/index"
 
 const app = express();
 
 app.use(bodyParser.json());
+app.use("/v1/shop",routes);
+
 
 // Database configuration
 const dbUrl = process.env.DATABASE_URL;
