@@ -6,5 +6,5 @@ return bcrypt.hashSync(password,10);
 }
 
 export const isPasswordMatching = (password,hashedPassword) =>{
-    return bcrypt.compareSync(password,hashedPassword)
+    return bcrypt.compareSync(password,hashedPassword);
 };

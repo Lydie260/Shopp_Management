@@ -1,29 +1,37 @@
 import UserModel from "../models/user";
 import { hashPassword, isPasswordMatching } from "../utils/hashPassword";
-import response from "../utils/response";
+import Response from "../utils/Response";
 import status from "http-status";
-
+import { generateToken } from "../utils/token";
 export const checkUser = async (req, res, next) => {
-    let { email, password} = req.body;
-    const user = await UserModel.findOne({email});
-    if(!user){
-        req.body.password = hashPassword(password);
-        return next();
-    }
-    return response.errorMessage(res, "user is already Exist",status.CONFLICT)
+  let { email, password } = req.body;
+  const user = await UserModel.findOne({ email });
+  if (!user) {
+    req.body.password = hashPassword(password);
+    return next();
+  }
+  return Response.errorMessage(res, "user is arleady exist", status.CONFLICT);
 };
 
-export const loginUser = async (req, res) =>{
-    let {email, password} = req.body;
-    const user = await UserModel.findOne({email});
-    if (!user) {
-        return response.errorMessage(res, "user does not exist", status.NOT_FOUND);
-    }
-    if(isPasswordMatching(password,
-        user.password
-        )){
-            user.password=null;
-            return response.succesMessage(res, "successfully logged in", user,status.OK);
-        }
-        return response.errorMessage(res, "Invalid password", status.BAD_REQUEST)
+export const loginUser = async (req, res) => {
+  let { email, password } = req.body;
+  const user = await UserModel.findOne({ email });
+  if (!user) {
+    return Response.errorMessage(
+      res,
+      "user/email is not exist",
+      status.NOT_FOUND
+    );
+  }
+  if (isPasswordMatching(password, user.password)) {
+    user.password = null;
+    const token = generateToken({ user });
+    return Response.succesMessage(
+      res,
+      "Successfully logged in",
+      { user, token },
+      status.OK
+    );
+  }
+  return Response.errorMessage(res, "Invalid password", status.BAD_REQUEST);
 };

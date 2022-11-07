@@ -1,9 +1,11 @@
 import { Router } from "express";
 import * as UserController from "../controllers/userController";
 import { checkUser,loginUser } from "../middleware/checkUserExist";
+import {verifyUserToken} from "../middleware/verifyToken"
 
 const route = Router();
-route.post("/login",loginUser)
+route.post("/login",loginUser);
+// route.use(verifyUserToken);
 route.route("/")
   .post(checkUser,   UserController.createController)
   .get(UserController.getAllController);
